@@ -54,7 +54,7 @@ The lexer generates the token sequence
 {token.RPAREN, ")"},
 {token.LBRACE, "{"},
 {token.IDENT, "x"},
-{token.MULTIPLY, "*"},
+{token.ASTERISK, "*"},
 {token.IDENT, "x"},
 {token.SEMICOLON, ";"},
 {token.RBRACE, "}"},
