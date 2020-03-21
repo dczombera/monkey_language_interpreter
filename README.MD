@@ -37,28 +37,28 @@ The interpreter takes source code as input, tokenizes it (i.e. creates tokens) i
 Given the code snippet
 
 ```javascript
-    let square = fn(x) {
-		x * x;
-	};
+let square = fn(x) {
+    x * x;
+};
 ```
 
 The lexer generates the token sequence
 
 ```javascript
-	{token.LET, "let"},
-	{token.IDENT, "square"},
-    {token.ASSIGN, "="},
-    {token.FUNCTION, "fn"},
-    {token.LPAREN, "("},
-    {token.IDENT, "x"},
-    {token.RPAREN, ")"},
-    {token.LBRACE, "{"},
-    {token.IDENT, "x"},
-    {token.MULTIPLY, "*"},
-    {token.IDENT, "x"},
-    {token.SEMICOLON, ";"},
-    {token.RBRACE, "}"},
-    {token.SEMICOLON, ";"},
+{token.LET, "let"},
+{token.IDENT, "square"},
+{token.ASSIGN, "="},
+{token.FUNCTION, "fn"},
+{token.LPAREN, "("},
+{token.IDENT, "x"},
+{token.RPAREN, ")"},
+{token.LBRACE, "{"},
+{token.IDENT, "x"},
+{token.MULTIPLY, "*"},
+{token.IDENT, "x"},
+{token.SEMICOLON, ";"},
+{token.RBRACE, "}"},
+{token.SEMICOLON, ";"},
 ```
 
 Which is then used by the parser to produce the AST. When the interpreter evaluates the program, it "walks" the AST and interprets it.
