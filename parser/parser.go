@@ -4,17 +4,18 @@ import (
 	"dczombera/monkey_language_interpreter/ast"
 	"dczombera/monkey_language_interpreter/lexer"
 	"dczombera/monkey_language_interpreter/token"
+	"fmt"
 )
 
 type Parser struct {
-	l *lexer.Lexer
-
+	l         *lexer.Lexer
+	errors    []string
 	curToken  token.Token
 	peekToken token.Token
 }
 
 func New(l *lexer.Lexer) *Parser {
-	p := &Parser{l: l}
+	p := &Parser{l: l, errors: []string{}}
 
 	p.nextToken()
 	p.nextToken()
@@ -22,16 +23,11 @@ func New(l *lexer.Lexer) *Parser {
 	return p
 }
 
-func (p *Parser) nextToken() {
-	p.curToken = p.peekToken
-	p.peekToken = p.l.NextToken()
-}
-
 func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 
-	for p.curToken.Type != token.EOF {
+	for !p.curTokenIs(token.EOF) {
 		stmt := p.parseStatement()
 		if stmt != nil {
 			program.Statements = append(program.Statements, stmt)
@@ -40,6 +36,15 @@ func (p *Parser) ParseProgram() *ast.Program {
 	}
 
 	return program
+}
+
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+func (p *Parser) nextToken() {
+	p.curToken = p.peekToken
+	p.peekToken = p.l.NextToken()
 }
 
 func (p *Parser) parseStatement() ast.Statement {
@@ -76,9 +81,15 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 	if p.peekTokenIs(t) {
 		p.nextToken()
 		return true
-	} else {
-		return false
 	}
+	p.peekError(t)
+	return false
+}
+
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("expected next token to be of type %s, got %s instead.",
+		t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
 }
 
 func (p *Parser) peekTokenIs(t token.TokenType) bool {
