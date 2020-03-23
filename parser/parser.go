@@ -7,11 +7,20 @@ import (
 	"fmt"
 )
 
+type (
+	prefixParseFn func() *ast.Expression
+	infixParseFn  func(*ast.Expression) *ast.Expression
+)
+
 type Parser struct {
-	l         *lexer.Lexer
-	errors    []string
+	l      *lexer.Lexer
+	errors []string
+
 	curToken  token.Token
 	peekToken token.Token
+
+	prefixParseFns map[token.TokenType]prefixParseFn
+	infixParseFns  map[token.TokenTypel]infixParseFn
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -40,6 +49,14 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 func (p *Parser) Errors() []string {
 	return p.errors
+}
+
+func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tokenType] = fn
+}
+
+func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
+	p.infixParseFns[tokenType] = fn
 }
 
 func (p *Parser) nextToken() {
