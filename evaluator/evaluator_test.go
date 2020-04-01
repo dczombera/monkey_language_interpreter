@@ -240,6 +240,24 @@ func TestFunctionObject(t *testing.T) {
 	}
 }
 
+func TestFunctionApplication(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"let identity = fn(x) { x; }; identity(42);", 42},
+		{"let identity = fn(x) { return x; }; identity(42);", 42},
+		{"let double = fn(x) { x * 2; }; double(21);", 42},
+		{"let add = fn(x, y) { x + y; }; add(21, 21);", 42},
+		{"let add = fn(x, y) { x + y; }; add(add(21, 21), 21);", 63},
+		{"fn(x) { x; }(42)", 42},
+	}
+
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input), tt.expected)
+	}
+}
+
 func testNullObject(t *testing.T, obj object.Object) bool {
 	if obj != NULL {
 		t.Errorf("object is not NULL. got=%T (%+v)", obj, obj)
