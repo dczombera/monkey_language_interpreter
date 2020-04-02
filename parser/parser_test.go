@@ -634,6 +634,30 @@ func TestCallExpressionArgumentParsing(t *testing.T) {
 	}
 }
 
+func TestStringLiteralExpression(t *testing.T) {
+	input := `"It's a trap!";`
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParseErrors(t, p)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not *ast.ExpressionStatement. got=%q", program.Statements[0])
+	}
+
+	literal, ok := stmt.Expression.(*ast.StringLiteral)
+	if !ok {
+		t.Fatalf("expression not *ast.StringLiteral. got=%q", stmt.Expression)
+	}
+
+	expected := "It's a trap!"
+	if literal.Value != expected {
+		t.Fatalf("literal.Value not %q. got=%q", expected, literal.Value)
+	}
+}
+
 func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
 	intLiteral, ok := il.(*ast.IntegerLiteral)
 	if !ok {

@@ -57,6 +57,9 @@ func (l *Lexer) NextToken() token.Token {
 		t = newToken(token.RBRACE, l.ch)
 	case ',':
 		t = newToken(token.COMMA, l.ch)
+	case '"':
+		t.Type = token.STRING
+		t.Literal = l.readString()
 	case 0:
 		t.Type = token.EOF
 		t.Literal = ""
@@ -86,6 +89,19 @@ func (l *Lexer) readChar() {
 	}
 	l.position = l.readPosition
 	l.readPosition++
+}
+
+func (l *Lexer) readString() string {
+	startPosition := l.readPosition
+	for {
+		l.readChar()
+		if l.ch == '"' || l.ch == 0 {
+			break
+		}
+	}
+
+	return l.input[startPosition:l.position]
+
 }
 
 func (l *Lexer) skipWhitespace() {

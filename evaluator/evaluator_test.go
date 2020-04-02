@@ -258,6 +258,21 @@ func TestFunctionApplication(t *testing.T) {
 	}
 }
 
+func TestStringLiteral(t *testing.T) {
+	input := `"It's a trap!";`
+
+	evaluated := testEval(input)
+	str, ok := evaluated.(*object.String)
+	if !ok {
+		t.Fatalf("object is not of type String. got=%T (%+v)", evaluated, evaluated)
+	}
+
+	expected := "It's a trap!"
+	if str.Value != expected {
+		t.Fatalf("String has wrong value. expected=%q, got=%q", expected, str.Value)
+	}
+}
+
 func testNullObject(t *testing.T, obj object.Object) bool {
 	if obj != NULL {
 		t.Errorf("object is not NULL. got=%T (%+v)", obj, obj)
