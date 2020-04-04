@@ -302,6 +302,19 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`len("hola mundo!")`, 11},
 		{`len(1)`, "argument to 'len' not supported, got=INTEGER, expected=STRING"},
 		{`len("one", "two")`, "wrong number of arguments, got=2, expected=1"},
+		{`len([1, 2, 3, 4])`, 4},
+		{`len([1 + 1, 2 * 3])`, 2},
+		{`len([])`, 0},
+		{`let array = [1, 2, 3 * 3]; len(array)`, 3},
+		{`first([1, 2, 3])`, 1},
+		{`first([])`, nil},
+		{`let array = [2 * 2, 3 + 3, 4 / 4]; first(array)`, 4},
+		{`last([1, 2, 3])`, 3},
+		{`let array = [2 * 2, 3 + 3, 4 / 4]; last(array)`, 1},
+		{`last([])`, nil},
+		{`rest([1, 2, 3])`, []int{2, 3}},
+		{`push([1, 2, 3], 4)`, []int{1, 2, 3, 4}},
+		{`let array = [1]; push(array, 2)`, []int{1, 2}},
 	}
 
 	for _, tt := range tests {
@@ -310,6 +323,10 @@ func TestBuiltinFunctions(t *testing.T) {
 		switch expected := tt.expected.(type) {
 		case int:
 			testIntegerObject(t, evaluated, int64(expected))
+		case []int:
+			testArrayObject(t, evaluated, expected)
+		case nil:
+			testNullObject(t, evaluated)
 		case string:
 			errObj, ok := evaluated.(*object.Error)
 			if !ok {
@@ -412,6 +429,29 @@ func testEval(input string) object.Object {
 	env := object.NewEnvironment()
 
 	return Eval(program, env)
+}
+
+func testArrayObject(t *testing.T, obj object.Object, expected []int) bool {
+	array, ok := obj.(*object.Array)
+	if !ok {
+		t.Errorf("object is not of type Array. got=%T (%+v)", obj, obj)
+		return false
+	}
+
+	for idx, el := range expected {
+		intObj, ok := array.Elements[idx].(*object.Integer)
+		if !ok {
+			t.Errorf("array element is not of type Integer. got=%T (%+v)", el, el)
+			return false
+		}
+		if intObj.Value != int64(el) {
+			t.Errorf("integer has wrong value. expected=%d, got=%d",
+				int64(el), intObj.Value)
+			return false
+		}
+	}
+
+	return true
 }
 
 func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
