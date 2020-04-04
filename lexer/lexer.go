@@ -60,6 +60,10 @@ func (l *Lexer) NextToken() token.Token {
 	case '"':
 		t.Type = token.STRING
 		t.Literal = l.readString()
+	case '[':
+		t = newToken(token.LBRACKET, l.ch)
+	case ']':
+		t = newToken(token.RBRACKET, l.ch)
 	case 0:
 		t.Type = token.EOF
 		t.Literal = ""
@@ -146,7 +150,7 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 }
 
 func isLetter(ch byte) bool {
-	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'z') || ch == '_'
+	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_'
 }
 
 func isDigit(ch byte) bool {
