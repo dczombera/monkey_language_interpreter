@@ -1,6 +1,9 @@
 package evaluator
 
-import "dczombera/monkey_language_interpreter/object"
+import (
+	"dczombera/monkey_language_interpreter/object"
+	"fmt"
+)
 
 var builtins = map[string]*object.Builtin{
 	"len":   &object.Builtin{Fn: builtinLen},
@@ -8,6 +11,7 @@ var builtins = map[string]*object.Builtin{
 	"last":  &object.Builtin{Fn: last},
 	"rest":  &object.Builtin{Fn: rest},
 	"push":  &object.Builtin{Fn: push},
+	"puts":  &object.Builtin{Fn: puts},
 }
 
 func builtinLen(args ...object.Object) object.Object {
@@ -102,4 +106,12 @@ func push(args ...object.Object) object.Object {
 	newElements[length] = args[1]
 
 	return &object.Array{Elements: newElements}
+}
+
+func puts(args ...object.Object) object.Object {
+	for _, arg := range args {
+		fmt.Println(arg.Inspect())
+	}
+
+	return NULL
 }
