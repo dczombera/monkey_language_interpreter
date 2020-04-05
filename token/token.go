@@ -46,6 +46,7 @@ const (
 	RBRACE   = "}"
 	LBRACKET = "["
 	RBRACKET = "]"
+	COLON    = ":"
 
 	STRING = "STRING"
 )
